@@ -58,6 +58,8 @@ Public Class Form1
 
     Private Sub TextBox2_TextChanged(sender As Object, e As EventArgs) Handles TextBox2.TextChanged
         'Name
+        'Test
+        '123
     End Sub
 
     Private Sub ComboBox1_SelectedIndexChanged_1(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
