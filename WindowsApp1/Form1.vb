@@ -3,10 +3,6 @@
 
 Public Class Form1
 
-    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs)
-
-    End Sub
-
     Private Sub TabPage1_Click(sender As Object, e As EventArgs)
 
     End Sub
@@ -56,18 +52,37 @@ Public Class Form1
         TextBox1.ReadOnly = True
     End Sub
 
+    Private originalText As String
+
     Private Sub TextBox2_TextChanged(sender As Object, e As EventArgs) Handles TextBox2.TextChanged
-        'Name
-        'Test
-        '123
+
+        If String.IsNullOrEmpty(originalText) Then
+            originalText = TextBox2.Text
+        End If
     End Sub
 
-    Private Sub ComboBox1_SelectedIndexChanged_1(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
-        'Department
+    Private Sub TextBox2_Leave(sender As Object, e As EventArgs) Handles TextBox2.Leave
+
+        If TextBox2.Text = "" Then
+            TextBox2.Text = originalText
+        End If
+    End Sub
+
+    Private defaultSelection As Boolean = True
+
+    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
+
+        If defaultSelection Then
+            defaultSelection = False
+
+
+            ComboBox1.DropDownStyle = ComboBoxStyle.DropDownList
+            ComboBox1.SelectedIndex = 0 '
+        End If
     End Sub
 
     Private Sub ComboBox2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox2.SelectedIndexChanged
-        'Level
+
     End Sub
 
     Private Sub RichTextBox1_TextChanged(sender As Object, e As EventArgs) Handles RichTextBox1.TextChanged
@@ -94,5 +109,32 @@ Public Class Form1
         RichTextBox1.Text = lastEntryValues(5)
         MessageBox.Show("Report Ticket Submitted")
 
+    End Sub
+
+    Private Sub RichTextBox2_TextChanged(sender As Object, e As EventArgs) Handles RichTextBox2.TextChanged
+
+    End Sub
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        Dim filePath As String = "C:\Users\MIS - Rafael\Desktop\PLDT\test.txt"
+        Dim fileContent As String = File.ReadAllText(filePath)
+        RichTextBox2.Text = fileContent
+
+        Dim timer As New Timer()
+        timer.Interval = 2000 ' 
+        AddHandler timer.Tick, AddressOf RefreshFileContent
+        timer.Start()
+    End Sub
+
+    Private Sub RefreshFileContent(sender As Object, e As EventArgs)
+        Dim filePath As String = "C:\Users\MIS - Rafael\Desktop\PLDT\test.txt"
+        Dim fileContent As String = File.ReadAllText(filePath)
+        RichTextBox2.Text = fileContent
+    End Sub
+
+    Private Sub TextBox3_TextChanged(sender As Object, e As EventArgs) Handles TextBox3.TextChanged
+        Console.WriteLine(DateAndTime.Now)
+        Console.ReadLine()
     End Sub
 End Class

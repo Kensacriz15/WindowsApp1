@@ -23,7 +23,6 @@ Partial Class Form1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
-        Me.Panel2 = New System.Windows.Forms.Panel()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.Panel1 = New System.Windows.Forms.Panel()
@@ -37,20 +36,15 @@ Partial Class Form1
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.DateTimePicker1 = New System.Windows.Forms.DateTimePicker()
+        Me.RichTextBox2 = New System.Windows.Forms.RichTextBox()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.Panel1.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.Home.SuspendLayout()
         Me.TabPage2.SuspendLayout()
+        Me.Panel2.SuspendLayout()
         Me.SuspendLayout()
-        '
-        'Panel2
-        '
-        Me.Panel2.BackColor = System.Drawing.Color.LightBlue
-        Me.Panel2.Location = New System.Drawing.Point(2, -2)
-        Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(797, 103)
-        Me.Panel2.TabIndex = 2
         '
         'Button1
         '
@@ -161,20 +155,21 @@ Partial Class Form1
         Me.TextBox1.ReadOnly = True
         Me.TextBox1.Size = New System.Drawing.Size(163, 20)
         Me.TextBox1.TabIndex = 1
+        Me.TextBox1.Text = "Ticket Number"
         '
         'ComboBox1
         '
+        Me.ComboBox1.DisplayMember = "Select Department"
         Me.ComboBox1.FormattingEnabled = True
-        Me.ComboBox1.Items.AddRange(New Object() {"CSMC", "MKK", "SPIRAL"})
+        Me.ComboBox1.Items.AddRange(New Object() {"Select Department", "CSMC", "MKK", "SPIRAL"})
         Me.ComboBox1.Location = New System.Drawing.Point(378, 63)
         Me.ComboBox1.Name = "ComboBox1"
         Me.ComboBox1.Size = New System.Drawing.Size(121, 21)
         Me.ComboBox1.TabIndex = 0
-        Me.ComboBox1.Text = "Department"
         '
         'TabPage2
         '
-        Me.TabPage2.Controls.Add(Me.DateTimePicker1)
+        Me.TabPage2.Controls.Add(Me.RichTextBox2)
         Me.TabPage2.Location = New System.Drawing.Point(4, 22)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
@@ -182,12 +177,29 @@ Partial Class Form1
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.UseVisualStyleBackColor = True
         '
-        'DateTimePicker1
+        'RichTextBox2
         '
-        Me.DateTimePicker1.Location = New System.Drawing.Point(230, 74)
-        Me.DateTimePicker1.Name = "DateTimePicker1"
-        Me.DateTimePicker1.Size = New System.Drawing.Size(200, 20)
-        Me.DateTimePicker1.TabIndex = 0
+        Me.RichTextBox2.Location = New System.Drawing.Point(0, 0)
+        Me.RichTextBox2.Name = "RichTextBox2"
+        Me.RichTextBox2.Size = New System.Drawing.Size(666, 359)
+        Me.RichTextBox2.TabIndex = 0
+        Me.RichTextBox2.Text = ""
+        '
+        'Panel2
+        '
+        Me.Panel2.BackColor = System.Drawing.Color.LightBlue
+        Me.Panel2.Controls.Add(Me.TextBox3)
+        Me.Panel2.Location = New System.Drawing.Point(2, 1)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(797, 101)
+        Me.Panel2.TabIndex = 2
+        '
+        'TextBox3
+        '
+        Me.TextBox3.Location = New System.Drawing.Point(286, 45)
+        Me.TextBox3.Name = "TextBox3"
+        Me.TextBox3.Size = New System.Drawing.Size(170, 20)
+        Me.TextBox3.TabIndex = 0
         '
         'Form1
         '
@@ -205,10 +217,11 @@ Partial Class Form1
         Me.Home.ResumeLayout(False)
         Me.Home.PerformLayout()
         Me.TabPage2.ResumeLayout(False)
+        Me.Panel2.ResumeLayout(False)
+        Me.Panel2.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents Panel2 As Panel
     Friend WithEvents Button1 As Button
     Friend WithEvents Button2 As Button
     Friend WithEvents Panel1 As Panel
@@ -222,5 +235,7 @@ Partial Class Form1
     Friend WithEvents RichTextBox1 As RichTextBox
     Friend WithEvents ComboBox2 As ComboBox
     Friend WithEvents Button5 As Button
-    Friend WithEvents DateTimePicker1 As DateTimePicker
+    Friend WithEvents RichTextBox2 As RichTextBox
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents TextBox3 As TextBox
 End Class
