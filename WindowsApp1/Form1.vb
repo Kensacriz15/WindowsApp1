@@ -29,44 +29,80 @@ Public Class Form1
         form1.Show()
     End Sub
 
-    Private UsedNumbers As New List(Of Long)()
-    Private NumbersFromFile As New List(Of Long)()
-
-    Private Sub ReadNumbersFromFile()
-        Dim filePath As String = "C:\Users\MIS - Rafael\Desktop\PLDT\test.txt"
-        If File.Exists(filePath) Then
-            Dim lines As String() = File.ReadAllLines(filePath)
-            For Each line As String In lines
-                Dim number As Long
-                If Long.TryParse(line, number) Then
-                    NumbersFromFile.Add(number)
-                End If
-            Next
-        End If
-    End Sub
-
-    Public Function GenerateUnique5DigitNumber() As Long
-        Dim newNumber As Long
-        Do
-            newNumber = GetNextNumber()
-        Loop While UsedNumbers.Contains(newNumber) Or NumbersFromFile.Contains(newNumber)
-        If Not NumbersFromFile.Contains(newNumber) Then
-            UsedNumbers.Add(newNumber)
-        End If
-        Return newNumber
-    End Function
-
     Private Function GetNextNumber() As Long
-        Static LastNumber As Long = 100000
+        Static LastNumber As Long = 100001
         LastNumber += 1
         Return LastNumber
     End Function
 
-    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
-        ReadNumbersFromFile()
-        Dim newNumber As Long = GenerateUnique5DigitNumber()
-        TextBox1.Text = newNumber.ToString()
+    Private Function GetNextNumber(xlWorkSheet As Object) As Long
+        Dim lastRow As Integer = xlWorkSheet.UsedRange.Rows.Count
+
+        Dim highestTicketNumber As Long = 100000 ' Assuming a starting number
+        For i As Integer = 2 To lastRow
+            Dim ticketNumber As Long
+            If Long.TryParse(xlWorkSheet.Cells(i, 2).Value, ticketNumber) Then
+                If ticketNumber > highestTicketNumber Then
+                    highestTicketNumber = ticketNumber
+                End If
+            End If
+        Next
+
+        Return highestTicketNumber + 1
+    End Function
+
+    Private Sub Button_Click4(sender As Object, e As EventArgs) Handles Button4.Click
+        Dim xlApp As Object = CreateObject("Excel.Application")
+        Dim xlWorkBook As Object
+        Dim xlWorkSheet As Object
+        Dim excelFilePath As String = "C:\Users\MIS - Rafael\Desktop\PLDT\report.xlsx"
+
+        Try
+            If File.Exists(excelFilePath) Then
+                xlWorkBook = xlApp.Workbooks.Open(excelFilePath)
+                xlWorkSheet = xlWorkBook.Sheets(1)
+
+                Dim lastRow As Integer = xlWorkSheet.UsedRange.Rows.Count
+
+                Dim ticketNumbers As New List(Of String)()
+                For i As Integer = 2 To lastRow
+                    ticketNumbers.Add(xlWorkSheet.Cells(i, 2).Value)
+                Next
+
+                Dim nextTicketNumber As String = GenerateNextTicketNumber(ticketNumbers, xlWorkSheet)
+
+                Dim currentRow As Integer = lastRow + 1
+                xlWorkSheet.Cells(currentRow, 1) = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                xlWorkSheet.Cells(currentRow, 2) = nextTicketNumber
+                xlWorkSheet.Cells(currentRow, 3) = TextBox2.Text
+                xlWorkSheet.Cells(currentRow, 4) = ComboBox1.Text
+                xlWorkSheet.Cells(currentRow, 5) = RichTextBox1.Text
+
+                TextBox1.Text = nextTicketNumber
+            Else
+                MessageBox.Show("Excel file not found.")
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Error Reading Excel File", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If xlWorkBook IsNot Nothing Then xlWorkBook.Close(False)
+            ReleaseObject(xlWorkSheet)
+            ReleaseObject(xlWorkBook)
+            ReleaseObject(xlApp)
+        End Try
     End Sub
+
+    Private Function GenerateNextTicketNumber(ticketNumbers As List(Of String), xlWorkSheet As Object) As String
+        Dim newNumber As Long = GetNextNumber(xlWorkSheet)
+        Dim nextTicketNumber As String = newNumber.ToString()
+
+        While ticketNumbers.Contains(nextTicketNumber)
+            newNumber = GetNextNumber(xlWorkSheet)
+            nextTicketNumber = newNumber.ToString()
+        End While
+
+        Return nextTicketNumber
+    End Function
 
     Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
         'Generate Ticket Number
@@ -121,36 +157,79 @@ Public Class Form1
     End Sub
 
     Private Sub WriteToExcel()
-        Dim xlApp As New Excel.Application
-        Dim xlWorkBook As Excel.Workbook = xlApp.Workbooks.Add()
-        Dim xlWorkSheet As Excel.Worksheet = CType(xlWorkBook.Sheets(1), Excel.Worksheet)
+        Dim xlApp As Object = CreateObject("Excel.Application")
+        Dim xlWorkBook As Object
+        Dim xlWorkSheet As Object
+
+        Dim excelFilePath As String = "C:\Users\MIS - Rafael\Desktop\PLDT\report.xlsx"
+        Dim ticketNumber As String = GenerateUniqueTicketNumber(xlApp, excelFilePath)
 
         Try
-            ' Write headers
-            xlWorkSheet.Cells(1, 1) = "Date"
-            xlWorkSheet.Cells(1, 2) = "Ticket Number"
-            xlWorkSheet.Cells(1, 3) = "Name"
-            xlWorkSheet.Cells(1, 4) = "Department"
-            xlWorkSheet.Cells(1, 5) = "Description"
+            If File.Exists(excelFilePath) Then
+                xlWorkBook = xlApp.Workbooks.Open(excelFilePath)
+                xlWorkSheet = xlWorkBook.Sheets(1)
+            Else
+                xlWorkBook = xlApp.Workbooks.Add()
+                xlWorkSheet = xlWorkBook.Sheets(1)
 
-            ' Write data
-            Dim row As Integer = 2
-            xlWorkSheet.Cells(row, 1) = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-            xlWorkSheet.Cells(row, 2) = TextBox1.Text
-            xlWorkSheet.Cells(row, 3) = TextBox2.Text
+                ' Write headers for new file
+                xlWorkSheet.Cells(1, 1) = "Date"
+                xlWorkSheet.Cells(1, 2) = "Ticket Number"
+                xlWorkSheet.Cells(1, 3) = "Name"
+                xlWorkSheet.Cells(1, 4) = "Department"
+                xlWorkSheet.Cells(1, 5) = "Description"
+            End If
+
+            ' Find the last row with data
+            Dim lastRow As Integer = xlWorkSheet.UsedRange.Rows.Count + 1
+
+            ' Write new data
+            xlWorkSheet.Cells(lastRow, 1) = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            xlWorkSheet.Cells(lastRow, 2) = ticketNumber
+            xlWorkSheet.Cells(lastRow, 3) = TextBox2.Text
+            xlWorkSheet.Cells(lastRow, 4) = ComboBox1.Text
+            xlWorkSheet.Cells(lastRow, 5) = RichTextBox1.Text
 
             ' Save Excel file
-            Dim excelFilePath As String = "C:\Users\MIS - Rafael\Desktop\PLDT\report.xlsx"
             xlWorkBook.SaveAs(excelFilePath)
+            File.SetAttributes(excelFilePath, FileAttributes.Normal) ' Set file attributes to normal
             MessageBox.Show("Report data saved to Excel file.")
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Error Saving Excel File", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
+            If xlWorkBook IsNot Nothing Then xlWorkBook.Close(True)
             ReleaseObject(xlWorkSheet)
             ReleaseObject(xlWorkBook)
             ReleaseObject(xlApp)
         End Try
     End Sub
+
+    Private Function GenerateUniqueTicketNumber(xlApp As Object, excelFilePath As String) As String
+        Dim ticketNumber As String
+        Dim numbersFromFile As New List(Of String)()
+
+        If File.Exists(excelFilePath) Then
+            Dim xlWorkBook As Object = xlApp.Workbooks.Open(excelFilePath)
+            Dim xlWorkSheet As Object = xlWorkBook.Sheets(1)
+
+            ' Get existing ticket numbers
+            Dim lastRow As Integer = xlWorkSheet.UsedRange.Rows.Count
+            For i As Integer = 2 To lastRow ' Start from row 2 (skipping headers)
+                numbersFromFile.Add(xlWorkSheet.Cells(i, 2).Value)
+            Next
+
+            xlWorkBook.Close(False)
+        End If
+
+        ' Generate unique ticket number
+        Dim newNumber As Long
+        Do
+            newNumber = GetNextNumber()
+            ticketNumber = newNumber.ToString()
+        Loop While numbersFromFile.Contains(ticketNumber)
+
+        Return ticketNumber
+    End Function
 
     Private Sub RichTextBox2_TextChanged(sender As Object, e As EventArgs) Handles RichTextBox2.TextChanged
 
