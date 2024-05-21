@@ -22,6 +22,7 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
@@ -39,6 +40,8 @@ Partial Class Form1
         Me.RichTextBox2 = New System.Windows.Forms.RichTextBox()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.TextBox3 = New System.Windows.Forms.TextBox()
+        Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.Panel1.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.Home.SuspendLayout()
@@ -105,42 +108,46 @@ Partial Class Form1
         'Button5
         '
         Me.Button5.BackColor = System.Drawing.Color.SkyBlue
-        Me.Button5.Location = New System.Drawing.Point(305, 231)
+        Me.Button5.Location = New System.Drawing.Point(314, 293)
         Me.Button5.Name = "Button5"
-        Me.Button5.Size = New System.Drawing.Size(75, 23)
+        Me.Button5.Size = New System.Drawing.Size(98, 38)
         Me.Button5.TabIndex = 7
         Me.Button5.Text = "Save Report"
         Me.Button5.UseVisualStyleBackColor = False
         '
         'ComboBox2
         '
+        Me.ComboBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ComboBox2.FormattingEnabled = True
         Me.ComboBox2.Items.AddRange(New Object() {"LOW", "URGENT", "CRITICAL"})
-        Me.ComboBox2.Location = New System.Drawing.Point(269, 195)
+        Me.ComboBox2.Location = New System.Drawing.Point(291, 256)
         Me.ComboBox2.Name = "ComboBox2"
-        Me.ComboBox2.Size = New System.Drawing.Size(121, 21)
+        Me.ComboBox2.Size = New System.Drawing.Size(121, 26)
         Me.ComboBox2.TabIndex = 6
         Me.ComboBox2.Text = "Level"
         '
         'RichTextBox1
         '
-        Me.RichTextBox1.Location = New System.Drawing.Point(151, 102)
+        Me.RichTextBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.RichTextBox1.Location = New System.Drawing.Point(88, 131)
         Me.RichTextBox1.Name = "RichTextBox1"
-        Me.RichTextBox1.Size = New System.Drawing.Size(348, 87)
+        Me.RichTextBox1.Size = New System.Drawing.Size(505, 119)
         Me.RichTextBox1.TabIndex = 5
         Me.RichTextBox1.Text = "Description(Problem)"
         '
         'TextBox2
         '
-        Me.TextBox2.Location = New System.Drawing.Point(151, 64)
+        Me.TextBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox2.Location = New System.Drawing.Point(173, 105)
         Me.TextBox2.Name = "TextBox2"
-        Me.TextBox2.Size = New System.Drawing.Size(142, 20)
+        Me.TextBox2.Size = New System.Drawing.Size(142, 22)
         Me.TextBox2.TabIndex = 3
         Me.TextBox2.Text = "Name"
         '
         'Button4
         '
-        Me.Button4.Location = New System.Drawing.Point(178, 24)
+        Me.Button4.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button4.Location = New System.Drawing.Point(202, 70)
         Me.Button4.Name = "Button4"
         Me.Button4.Size = New System.Drawing.Size(36, 23)
         Me.Button4.TabIndex = 2
@@ -149,22 +156,24 @@ Partial Class Form1
         '
         'TextBox1
         '
-        Me.TextBox1.Location = New System.Drawing.Point(240, 26)
+        Me.TextBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox1.Location = New System.Drawing.Point(262, 67)
         Me.TextBox1.Multiline = True
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.ReadOnly = True
-        Me.TextBox1.Size = New System.Drawing.Size(163, 20)
+        Me.TextBox1.Size = New System.Drawing.Size(163, 26)
         Me.TextBox1.TabIndex = 1
         Me.TextBox1.Text = "Ticket Number"
         '
         'ComboBox1
         '
         Me.ComboBox1.DisplayMember = "Select Department"
+        Me.ComboBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ComboBox1.FormattingEnabled = True
         Me.ComboBox1.Items.AddRange(New Object() {"Select Department", "CSMC", "MKK", "SPIRAL"})
-        Me.ComboBox1.Location = New System.Drawing.Point(378, 63)
+        Me.ComboBox1.Location = New System.Drawing.Point(400, 104)
         Me.ComboBox1.Name = "ComboBox1"
-        Me.ComboBox1.Size = New System.Drawing.Size(121, 21)
+        Me.ComboBox1.Size = New System.Drawing.Size(121, 24)
         Me.ComboBox1.TabIndex = 0
         '
         'TabPage2
@@ -196,10 +205,21 @@ Partial Class Form1
         '
         'TextBox3
         '
-        Me.TextBox3.Location = New System.Drawing.Point(286, 45)
+        Me.TextBox3.BackColor = System.Drawing.SystemColors.Info
+        Me.TextBox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox3.Location = New System.Drawing.Point(190, 34)
         Me.TextBox3.Name = "TextBox3"
-        Me.TextBox3.Size = New System.Drawing.Size(170, 20)
+        Me.TextBox3.ReadOnly = True
+        Me.TextBox3.Size = New System.Drawing.Size(348, 31)
         Me.TextBox3.TabIndex = 0
+        '
+        'NotifyIcon1
+        '
+        Me.NotifyIcon1.Text = "NotifyIcon1"
+        Me.NotifyIcon1.Visible = True
+        '
+        'Timer1
+        '
         '
         'Form1
         '
@@ -238,4 +258,6 @@ Partial Class Form1
     Friend WithEvents RichTextBox2 As RichTextBox
     Friend WithEvents Panel2 As Panel
     Friend WithEvents TextBox3 As TextBox
+    Friend WithEvents NotifyIcon1 As NotifyIcon
+    Friend WithEvents Timer1 As Timer
 End Class
