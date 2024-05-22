@@ -42,6 +42,8 @@ Partial Class Form1
         Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.Button3 = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.Home.SuspendLayout()
@@ -60,7 +62,7 @@ Partial Class Form1
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(0, 23)
+        Me.Button2.Location = New System.Drawing.Point(0, 49)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(135, 26)
         Me.Button2.TabIndex = 3
@@ -69,6 +71,7 @@ Partial Class Form1
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.Button3)
         Me.Panel1.Controls.Add(Me.Button2)
         Me.Panel1.Controls.Add(Me.Button1)
         Me.Panel1.Location = New System.Drawing.Point(2, 97)
@@ -82,6 +85,7 @@ Partial Class Form1
         Me.TabControl1.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.TabControl1.Controls.Add(Me.Home)
         Me.TabControl1.Controls.Add(Me.TabPage2)
+        Me.TabControl1.Controls.Add(Me.TabPage1)
         Me.TabControl1.Location = New System.Drawing.Point(133, 72)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
@@ -117,14 +121,14 @@ Partial Class Form1
         '
         'ComboBox2
         '
+        Me.ComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ComboBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ComboBox2.FormattingEnabled = True
-        Me.ComboBox2.Items.AddRange(New Object() {"LOW", "URGENT", "CRITICAL"})
+        Me.ComboBox2.Items.AddRange(New Object() {"Level", "LOW", "URGENT", "CRITICAL"})
         Me.ComboBox2.Location = New System.Drawing.Point(291, 256)
         Me.ComboBox2.Name = "ComboBox2"
         Me.ComboBox2.Size = New System.Drawing.Size(121, 26)
         Me.ComboBox2.TabIndex = 6
-        Me.ComboBox2.Text = "Level"
         '
         'RichTextBox1
         '
@@ -167,13 +171,13 @@ Partial Class Form1
         '
         'ComboBox1
         '
-        Me.ComboBox1.DisplayMember = "Select Department"
+        Me.ComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ComboBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ComboBox1.FormattingEnabled = True
-        Me.ComboBox1.Items.AddRange(New Object() {"Select Department", "CSMC", "MKK", "SPIRAL"})
+        Me.ComboBox1.Items.AddRange(New Object() {"Select Department", "CSMC", "MKK", "SPIRAL", "MARKETING", "LOGISTIC"})
         Me.ComboBox1.Location = New System.Drawing.Point(400, 104)
         Me.ComboBox1.Name = "ComboBox1"
-        Me.ComboBox1.Size = New System.Drawing.Size(121, 24)
+        Me.ComboBox1.Size = New System.Drawing.Size(145, 24)
         Me.ComboBox1.TabIndex = 0
         '
         'TabPage2
@@ -200,14 +204,14 @@ Partial Class Form1
         Me.Panel2.Controls.Add(Me.TextBox3)
         Me.Panel2.Location = New System.Drawing.Point(2, 1)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(797, 101)
+        Me.Panel2.Size = New System.Drawing.Size(797, 65)
         Me.Panel2.TabIndex = 2
         '
         'TextBox3
         '
         Me.TextBox3.BackColor = System.Drawing.SystemColors.Info
         Me.TextBox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox3.Location = New System.Drawing.Point(190, 34)
+        Me.TextBox3.Location = New System.Drawing.Point(253, 34)
         Me.TextBox3.Name = "TextBox3"
         Me.TextBox3.ReadOnly = True
         Me.TextBox3.Size = New System.Drawing.Size(348, 31)
@@ -220,6 +224,25 @@ Partial Class Form1
         '
         'Timer1
         '
+        '
+        'TabPage1
+        '
+        Me.TabPage1.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage1.Name = "TabPage1"
+        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage1.Size = New System.Drawing.Size(662, 355)
+        Me.TabPage1.TabIndex = 2
+        Me.TabPage1.Text = "TabPage1"
+        Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'Button3
+        '
+        Me.Button3.Location = New System.Drawing.Point(0, 32)
+        Me.Button3.Name = "Button3"
+        Me.Button3.Size = New System.Drawing.Size(135, 26)
+        Me.Button3.TabIndex = 4
+        Me.Button3.Text = "Status"
+        Me.Button3.UseVisualStyleBackColor = True
         '
         'Form1
         '
@@ -260,4 +283,6 @@ Partial Class Form1
     Friend WithEvents TextBox3 As TextBox
     Friend WithEvents NotifyIcon1 As NotifyIcon
     Friend WithEvents Timer1 As Timer
+    Friend WithEvents Button3 As Button
+    Friend WithEvents TabPage1 As TabPage
 End Class
