@@ -102,17 +102,35 @@ Public Class Form1
             ' Check if the file already exists
             If File.Exists(txtFilePath) Then
                 ' Append the new report data to the existing file
-                File.AppendAllText(txtFilePath, reportData)
-            Else
-                ' Create a new file and write the report data
-                File.WriteAllText(txtFilePath, reportData)
             End If
 
-            MessageBox.Show("Report data saved to TXT file.")
+
+            Dim existingTickets As New List(Of String)
+
+            If existingTickets.Contains(TextBox1.Text) Then
+                MessageBox.Show("Error: Duplicate ticket number detected. The record was not saved.", "Duplicate Ticket Number", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Else
+                ' Append the new report data to the existing file or create a new file if it doesn't exist
+                If File.Exists(txtFilePath) Then
+                    ' Check if the ticket number already exists in the file
+                    Dim fileContent As String = File.ReadAllText(txtFilePath)
+                    If Not fileContent.Contains($"Ticket Number: {TextBox1.Text}") Then
+                        File.AppendAllText(txtFilePath, reportData)
+                    Else
+                        MessageBox.Show("Error: Duplicate ticket number detected. The record was not saved.", "Duplicate Ticket Number", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Return
+                    End If
+                Else
+                    File.WriteAllText(txtFilePath, reportData)
+                End If
+
+                MessageBox.Show("Report data saved to TXT file.")
+            End If
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Error Saving TXT File", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+
     Private Sub SaveReportToCSV()
         Dim commonDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS/TICKETS")
         Dim year As String = Date.Now.Year.ToString()
@@ -218,7 +236,11 @@ Public Class Form1
 
         Return existingTickets
     End Function
+
 #End Region
 
+#Region "Tab 2 Code"
 
+
+#End Region
 End Class
