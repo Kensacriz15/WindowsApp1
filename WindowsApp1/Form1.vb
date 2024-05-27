@@ -247,6 +247,7 @@ Public Class Form1
     End Sub
 
     Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click
+        ' Trigger Find ticket
         Dim ticketNumber As String = TextBox4.Text
         Dim commonDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS/TICKETS")
         Dim year As String = Date.Now.Year.ToString()
@@ -259,75 +260,36 @@ Public Class Form1
                 Return
             End If
 
-            Dim ticketFound As Boolean = False
-            Dim ticketInfo As String = ""
+            Dim ticketInfo As String = FindTicketInformation(csvFilePath, ticketNumber)
+            Dim departmentSection As String = ""
+            Dim reportDate As String = ""
+            Dim name As String = ""
+            Dim description As String = ""
+            Dim level As String = ""
 
-            Using reader As New StreamReader(csvFilePath)
-                Dim line As String
+            If Not String.IsNullOrEmpty(ticketInfo) Then
+                ' Extract the fields from ticketInfo
+                Dim values As String() = ticketInfo.Split(","c)
+                If values.Length >= 6 Then
+                    reportDate = values(0).Trim()
+                    name = values(2).Trim()
+                    departmentSection = values(3).Trim()
+                    description = values(4).Trim()
+                    level = values(5).Trim()
+                Else
+                    MessageBox.Show("Error: The ticket information is incomplete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
+                End If
 
-                While Not reader.EndOfStream
-                    line = reader.ReadLine()
-                    Dim values As String() = line.Split(","c)
-                    If values.Length > 1 AndAlso values(1) = ticketNumber Then
-                        ' Store the information about the ticket
-                        ticketInfo = $"Ticket Number: {values(1)}" & Environment.NewLine &
-                                $"Name: {values(2)}" & Environment.NewLine &
-                                $"Department: {values(3)}" & Environment.NewLine &
-                                $"Description: {values(4)}" & Environment.NewLine &
-                                $"Level: {values(5)}"
-                        ticketFound = True
-                        Exit While
-                    End If
-                End While
-            End Using
-
-            If ticketFound Then
                 ' Display information about the ticket
-                MessageBox.Show(ticketInfo, "Ticket Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Dim displayInfo As String = $"Date: {reportDate}{Environment.NewLine}Ticket Number: {ticketNumber}{Environment.NewLine}Name: {name}{Environment.NewLine}Department: {departmentSection}{Environment.NewLine}Description: {description}{Environment.NewLine}Level: {level}"
+                MessageBox.Show(displayInfo, "Ticket Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-                ' Add PDF and Print buttons
+                ' Ask user if they want to generate a PDF
                 Dim dialogResult As DialogResult = MessageBox.Show("Do you want to generate a PDF for this ticket?", "Generate PDF", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
                 If dialogResult = DialogResult.Yes Then
-                    ' Generate PDF and save it
-                    Dim pdfFilePath As String = Path.Combine(commonDirectory, $"{ticketNumber}.pdf")
-
-                    Dim document As New PdfDocument()
-                    Dim page As PdfPage = document.AddPage()
-                    Dim gfx As XGraphics = XGraphics.FromPdfPage(page)
-                    Dim font As New XFont("Arial", 12)
-
-                    ' Draw header
-                    Dim headerFont As New XFont("Arial", 16, XFontStyle.Bold)
-                    gfx.DrawString("Mayer Steel Pipe", headerFont, XBrushes.Black, New XRect(0, 20, page.Width.Point, 0), XStringFormats.TopCenter)
-
-                    ' Draw ticket information
-                    Dim yPos As Double = 60
-                    Dim fontHeight As Double = gfx.MeasureString("Sample Text", font).Height
-                    gfx.DrawString(ticketInfo, font, XBrushes.Black, New XRect(40, yPos, page.Width.Point - 80, 0), XStringFormats.TopLeft)
-
-                    ' Draw ticketing format
-                    Dim ticketWidth As Double = page.Width.Point * 0.8
-                    Dim ticketHeight As Double = 100
-                    Dim ticketX As Double = (page.Width.Point - ticketWidth) / 2
-                    Dim ticketY As Double = yPos + fontHeight + 20
-
-                    Dim ticketBrush As New XSolidBrush(XColors.LightGray)
-                    gfx.DrawRectangle(ticketBrush, ticketX, ticketY, ticketWidth, ticketHeight)
-
-                    ' Add ticketing information
-                    Dim ticketTextX As Double = ticketX + 10
-                    Dim ticketTextY As Double = ticketY + 10
-                    gfx.DrawString("Ticket Number: " & ticketNumber, font, XBrushes.Black, New XRect(ticketTextX, ticketTextY, ticketWidth - 20, 0), XStringFormats.TopLeft)
-
-                    ' Add more ticket information as needed
-
-                    document.Save(pdfFilePath)
-
-                    MessageBox.Show("PDF generated and saved successfully.", "PDF Generated", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-                    ' Open the PDF file with the default viewer
-                    Process.Start(pdfFilePath)
+                    GenerateAndSavePDF(commonDirectory, ticketNumber, description, departmentSection, reportDate)
                 End If
             Else
                 MessageBox.Show("Ticket number not found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -337,6 +299,126 @@ Public Class Form1
             MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+
+    Private Function FindTicketInformation(csvFilePath As String, ticketNumber As String) As String
+        Using reader As New StreamReader(csvFilePath)
+            While Not reader.EndOfStream
+                Dim line As String = reader.ReadLine()
+                Dim values As String() = line.Split(","c)
+                If values.Length > 1 AndAlso values(1).Trim() = ticketNumber Then
+                    Return line
+                End If
+            End While
+        End Using
+        Return String.Empty
+    End Function
+
+    Private Sub GenerateAndSavePDF(commonDirectory As String, ticketNumber As String, description As String, departmentSection As String, reportDate As String)
+        Dim pdfFilePath As String = Path.Combine(commonDirectory, $"{ticketNumber}.pdf")
+
+        ' Create a new PDF document
+        Dim document As New PdfSharp.Pdf.PdfDocument()
+        Dim page As PdfSharp.Pdf.PdfPage = document.AddPage()
+        Dim gfx As PdfSharp.Drawing.XGraphics = PdfSharp.Drawing.XGraphics.FromPdfPage(page)
+        Dim font As New PdfSharp.Drawing.XFont("Arial", 12)
+
+        ' Draw header
+        Dim headerFont As New PdfSharp.Drawing.XFont("Arial", 16, PdfSharp.Drawing.XFontStyle.Bold)
+        gfx.DrawString("MAYER STEEL PIPE CORPORATION", headerFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 20, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
+
+        ' Draw MIS Department header
+        Dim misHeaderFont As New PdfSharp.Drawing.XFont("Arial", 14, PdfSharp.Drawing.XFontStyle.Bold)
+        gfx.DrawString("MIS Department", misHeaderFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 50, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
+
+        ' Draw ticket number and date
+        gfx.DrawString("No:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 70, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(ticketNumber, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(430, 70, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Date:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 90, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(reportDate, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(440, 90, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw "MIS TROUBLE REPORT" header
+        Dim troubleReportFont As New PdfSharp.Drawing.XFont("Arial", 14, PdfSharp.Drawing.XFontStyle.Bold)
+        gfx.DrawString("MIS TROUBLE REPORT", troubleReportFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 110, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
+
+        ' Draw department/section
+        gfx.DrawString("Department/Section:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 140, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(departmentSection, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(180, 140, 300, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw trouble box
+        Dim troubleBoxX As Double = 40
+        Dim troubleBoxY As Double = 160
+        Dim troubleBoxWidth As Double = page.Width.Point * 0.4
+        Dim troubleBoxHeight As Double = 100
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX, troubleBoxY, troubleBoxWidth, troubleBoxHeight)
+        gfx.DrawString("TROUBLE", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleBoxY + 10, troubleBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw the trouble description
+        Dim troubleDescriptionY As Double = troubleBoxY + 30
+        gfx.DrawString(description, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, troubleBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw the underline for the description
+        Dim underlineHeight As Double = 0 ' Adjust the height of the underline as needed
+        Dim underlineY As Double = troubleDescriptionY + font.GetHeight() - underlineHeight
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, underlineY, troubleBoxWidth - 20, underlineHeight)
+
+        ' Draw the additional lines
+        Dim additionalLineY1 As Double = underlineY + underlineHeight + 25 ' Adjust the spacing between lines as needed
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, additionalLineY1, troubleBoxWidth - 20, underlineHeight)
+
+        Dim additionalLineY2 As Double = additionalLineY1 + underlineHeight + 25 ' Adjust the spacing between lines as needed
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, additionalLineY2, troubleBoxWidth - 20, underlineHeight)
+
+        ' Draw action box
+        Dim actionBoxX As Double = page.Width.Point * 0.5
+        Dim actionBoxY As Double = troubleBoxY
+        Dim actionBoxWidth As Double = page.Width.Point * 0.4
+        Dim actionBoxHeight As Double = 100
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, actionBoxX, actionBoxY, actionBoxWidth, actionBoxHeight)
+        gfx.DrawString("ACTION", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionBoxY + 10, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw action description
+        Dim actionDescriptionY As Double = actionBoxY + 30
+        gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        actionDescriptionY += font.GetHeight()
+        gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        actionDescriptionY += font.GetHeight()
+        gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw reported by section
+        gfx.DrawString("Reported by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 280, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("____________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(130, 280, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 280, 50, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(450, 280, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw performed by section
+        gfx.DrawString("Performed by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 300, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("____________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(130, 300, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time Started:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 300, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(510, 300, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw accepted by section
+        gfx.DrawString("Accepted by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 320, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("____________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(130, 320, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time Completed:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 320, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(510, 320, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+
+        ' Draw the big box
+        Dim bigBoxX As Double = 50
+        Dim bigBoxY As Double = 90
+        Dim bigBoxWidth As Double = page.Width.Point * 0.9
+        Dim bigBoxHeight As Double = 310
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, bigBoxX, bigBoxY, bigBoxWidth, bigBoxHeight)
+
+        ' Save the PDF document
+        document.Save(pdfFilePath)
+
+        MessageBox.Show("PDF generated and saved successfully.", "PDF Generated", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        ' Open the PDF file with the default viewer
+        Process.Start(pdfFilePath)
+    End Sub
+
+
 
 
 #End Region
