@@ -1,11 +1,11 @@
 ﻿Imports System.IO
 Imports System.Text
-Imports iText.Kernel.Exceptions
-Imports iText.Kernel.Pdf
-Imports iText.Layout
-Imports iText.Layout.Element
-Imports Microsoft.VisualBasic.Logging
+Imports PdfSharp.Pdf
+Imports PdfSharp.Drawing
+Imports System.Diagnostics
 
+
+'use 192.168.1.15 default saving
 Public Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -237,9 +237,106 @@ Public Class Form1
         Return existingTickets
     End Function
 
+
 #End Region
 
 #Region "Tab 2 Code"
+
+    Private Sub TextBox4_TextChanged(sender As Object, e As EventArgs) Handles TextBox4.TextChanged
+        'input ticket number
+    End Sub
+
+    Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click
+        Dim ticketNumber As String = TextBox4.Text
+        Dim commonDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS/TICKETS")
+        Dim year As String = Date.Now.Year.ToString()
+        Dim csvFileName As String = $"{year}REPORT.csv"
+        Dim csvFilePath As String = Path.Combine(commonDirectory, csvFileName)
+
+        Try
+            If Not File.Exists(csvFilePath) Then
+                MessageBox.Show("CSV file does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End If
+
+            Dim ticketFound As Boolean = False
+            Dim ticketInfo As String = ""
+
+            Using reader As New StreamReader(csvFilePath)
+                Dim line As String
+
+                While Not reader.EndOfStream
+                    line = reader.ReadLine()
+                    Dim values As String() = line.Split(","c)
+                    If values.Length > 1 AndAlso values(1) = ticketNumber Then
+                        ' Store the information about the ticket
+                        ticketInfo = $"Ticket Number: {values(1)}" & Environment.NewLine &
+                                $"Name: {values(2)}" & Environment.NewLine &
+                                $"Department: {values(3)}" & Environment.NewLine &
+                                $"Description: {values(4)}" & Environment.NewLine &
+                                $"Level: {values(5)}"
+                        ticketFound = True
+                        Exit While
+                    End If
+                End While
+            End Using
+
+            If ticketFound Then
+                ' Display information about the ticket
+                MessageBox.Show(ticketInfo, "Ticket Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                ' Add PDF and Print buttons
+                Dim dialogResult As DialogResult = MessageBox.Show("Do you want to generate a PDF for this ticket?", "Generate PDF", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+                If dialogResult = DialogResult.Yes Then
+                    ' Generate PDF and save it
+                    Dim pdfFilePath As String = Path.Combine(commonDirectory, $"{ticketNumber}.pdf")
+
+                    Dim document As New PdfDocument()
+                    Dim page As PdfPage = document.AddPage()
+                    Dim gfx As XGraphics = XGraphics.FromPdfPage(page)
+                    Dim font As New XFont("Arial", 12)
+
+                    ' Draw header
+                    Dim headerFont As New XFont("Arial", 16, XFontStyle.Bold)
+                    gfx.DrawString("Mayer Steel Pipe", headerFont, XBrushes.Black, New XRect(0, 20, page.Width.Point, 0), XStringFormats.TopCenter)
+
+                    ' Draw ticket information
+                    Dim yPos As Double = 60
+                    Dim fontHeight As Double = gfx.MeasureString("Sample Text", font).Height
+                    gfx.DrawString(ticketInfo, font, XBrushes.Black, New XRect(40, yPos, page.Width.Point - 80, 0), XStringFormats.TopLeft)
+
+                    ' Draw ticketing format
+                    Dim ticketWidth As Double = page.Width.Point * 0.8
+                    Dim ticketHeight As Double = 100
+                    Dim ticketX As Double = (page.Width.Point - ticketWidth) / 2
+                    Dim ticketY As Double = yPos + fontHeight + 20
+
+                    Dim ticketBrush As New XSolidBrush(XColors.LightGray)
+                    gfx.DrawRectangle(ticketBrush, ticketX, ticketY, ticketWidth, ticketHeight)
+
+                    ' Add ticketing information
+                    Dim ticketTextX As Double = ticketX + 10
+                    Dim ticketTextY As Double = ticketY + 10
+                    gfx.DrawString("Ticket Number: " & ticketNumber, font, XBrushes.Black, New XRect(ticketTextX, ticketTextY, ticketWidth - 20, 0), XStringFormats.TopLeft)
+
+                    ' Add more ticket information as needed
+
+                    document.Save(pdfFilePath)
+
+                    MessageBox.Show("PDF generated and saved successfully.", "PDF Generated", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                    ' Open the PDF file with the default viewer
+                    Process.Start(pdfFilePath)
+                End If
+            Else
+                MessageBox.Show("Ticket number not found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
 
 
 #End Region

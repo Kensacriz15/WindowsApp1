@@ -38,13 +38,14 @@ Partial Class Form1
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.Button2 = New System.Windows.Forms.Button()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.Button6 = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.Button2 = New System.Windows.Forms.Button()
+        Me.TextBox4 = New System.Windows.Forms.TextBox()
         Me.Panel1.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.Home.SuspendLayout()
@@ -200,6 +201,7 @@ Partial Class Form1
         '
         'TabPage2
         '
+        Me.TabPage2.Controls.Add(Me.TextBox4)
         Me.TabPage2.Controls.Add(Me.Button2)
         Me.TabPage2.Location = New System.Drawing.Point(4, 22)
         Me.TabPage2.Name = "TabPage2"
@@ -207,6 +209,16 @@ Partial Class Form1
         Me.TabPage2.Size = New System.Drawing.Size(660, 356)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.UseVisualStyleBackColor = True
+        '
+        'Button2
+        '
+        Me.Button2.Font = New System.Drawing.Font("Microsoft Tai Le", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button2.Location = New System.Drawing.Point(195, 64)
+        Me.Button2.Name = "Button2"
+        Me.Button2.Size = New System.Drawing.Size(78, 31)
+        Me.Button2.TabIndex = 0
+        Me.Button2.Text = "FIND"
+        Me.Button2.UseVisualStyleBackColor = True
         '
         'TabPage1
         '
@@ -255,23 +267,22 @@ Partial Class Form1
         'Timer1
         '
         '
-        'Button2
+        'TextBox4
         '
-        Me.Button2.Location = New System.Drawing.Point(152, 43)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(75, 23)
-        Me.Button2.TabIndex = 0
-        Me.Button2.Text = "Button2"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.TextBox4.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox4.Location = New System.Drawing.Point(319, 64)
+        Me.TextBox4.Name = "TextBox4"
+        Me.TextBox4.Size = New System.Drawing.Size(183, 31)
+        Me.TextBox4.TabIndex = 1
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Controls.Add(Me.TabControl1)
         Me.Controls.Add(Me.Panel2)
         Me.Controls.Add(Me.Panel1)
+        Me.Controls.Add(Me.TabControl1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form1"
         Me.Text = "MIS MAINTENANCE"
@@ -280,6 +291,7 @@ Partial Class Form1
         Me.Home.ResumeLayout(False)
         Me.Home.PerformLayout()
         Me.TabPage2.ResumeLayout(False)
+        Me.TabPage2.PerformLayout()
         Me.TabPage1.ResumeLayout(False)
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
@@ -307,4 +319,5 @@ Partial Class Form1
     Friend WithEvents Button6 As Button
     Friend WithEvents Button7 As Button
     Friend WithEvents Button2 As Button
+    Friend WithEvents TextBox4 As TextBox
 End Class
