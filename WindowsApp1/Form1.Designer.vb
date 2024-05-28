@@ -38,6 +38,7 @@ Partial Class Form1
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.TextBox4 = New System.Windows.Forms.TextBox()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.Button6 = New System.Windows.Forms.Button()
@@ -45,7 +46,6 @@ Partial Class Form1
         Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.TextBox4 = New System.Windows.Forms.TextBox()
         Me.Panel1.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.Home.SuspendLayout()
@@ -131,7 +131,7 @@ Partial Class Form1
         'Button5
         '
         Me.Button5.BackColor = System.Drawing.Color.SkyBlue
-        Me.Button5.Location = New System.Drawing.Point(314, 293)
+        Me.Button5.Location = New System.Drawing.Point(309, 284)
         Me.Button5.Name = "Button5"
         Me.Button5.Size = New System.Drawing.Size(98, 38)
         Me.Button5.TabIndex = 7
@@ -144,7 +144,7 @@ Partial Class Form1
         Me.ComboBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ComboBox2.FormattingEnabled = True
         Me.ComboBox2.Items.AddRange(New Object() {"Level", "LOW", "URGENT", "CRITICAL"})
-        Me.ComboBox2.Location = New System.Drawing.Point(291, 256)
+        Me.ComboBox2.Location = New System.Drawing.Point(286, 233)
         Me.ComboBox2.Name = "ComboBox2"
         Me.ComboBox2.Size = New System.Drawing.Size(121, 26)
         Me.ComboBox2.TabIndex = 6
@@ -152,9 +152,9 @@ Partial Class Form1
         'RichTextBox1
         '
         Me.RichTextBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RichTextBox1.Location = New System.Drawing.Point(88, 131)
+        Me.RichTextBox1.Location = New System.Drawing.Point(202, 146)
         Me.RichTextBox1.Name = "RichTextBox1"
-        Me.RichTextBox1.Size = New System.Drawing.Size(505, 119)
+        Me.RichTextBox1.Size = New System.Drawing.Size(272, 58)
         Me.RichTextBox1.TabIndex = 5
         Me.RichTextBox1.Text = "Description(Problem)"
         '
@@ -209,6 +209,14 @@ Partial Class Form1
         Me.TabPage2.Size = New System.Drawing.Size(660, 356)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.UseVisualStyleBackColor = True
+        '
+        'TextBox4
+        '
+        Me.TextBox4.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox4.Location = New System.Drawing.Point(319, 64)
+        Me.TextBox4.Name = "TextBox4"
+        Me.TextBox4.Size = New System.Drawing.Size(183, 31)
+        Me.TextBox4.TabIndex = 1
         '
         'Button2
         '
@@ -266,14 +274,6 @@ Partial Class Form1
         '
         'Timer1
         '
-        '
-        'TextBox4
-        '
-        Me.TextBox4.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBox4.Location = New System.Drawing.Point(319, 64)
-        Me.TextBox4.Name = "TextBox4"
-        Me.TextBox4.Size = New System.Drawing.Size(183, 31)
-        Me.TextBox4.TabIndex = 1
         '
         'Form1
         '

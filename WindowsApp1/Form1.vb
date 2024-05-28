@@ -86,7 +86,7 @@ Public Class Form1
         Dim txtFilePath As String = Path.Combine(commonDirectory, txtFileName)
 
         ' Save report data to the TXT file
-        Dim reportData As String = $"Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}" & Environment.NewLine &
+        Dim reportData As String = $"Date: {DateTime.Now:yyyy-MM-dd HH:mm tt}" & Environment.NewLine &
                                $"Ticket Number: {TextBox1.Text}" & Environment.NewLine &
                                $"Name: {TextBox2.Text}" & Environment.NewLine &
                                $"Department: {ComboBox1.Text}" & Environment.NewLine &
@@ -138,7 +138,7 @@ Public Class Form1
         Dim csvFilePath As String = Path.Combine(commonDirectory, csvFileName)
 
         ' Save report data to the CSV file
-        Dim reportData As String = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss},{TextBox1.Text},{TextBox2.Text},{ComboBox1.Text},{RichTextBox1.Text},{ComboBox2.Text}"
+        Dim reportData As String = $"{DateTime.Now:yyyy-MM-dd hh:mm tt},{TextBox1.Text},{TextBox2.Text},{ComboBox1.Text},{RichTextBox1.Text},{ComboBox2.Text}"
         Dim newTicketNumber As String = TextBox1.Text
 
         Try
@@ -336,10 +336,18 @@ Public Class Form1
         gfx.DrawString("MIS Department", misHeaderFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 85, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
 
         ' Draw ticket number and date
-        gfx.DrawString("No: ͟ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 100, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("No: ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 100, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
         gfx.DrawString(ticketNumber, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(430, 100, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Date: ͟ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 170, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString(reportDate, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(440, 170, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        Dim displayDate As String = ""
+        If DateTime.TryParse(reportDate, Nothing) Then
+            displayDate = DateTime.Parse(reportDate).ToString("yyyy-MM-dd")
+        Else
+            displayDate = "Error: Invalid date format"
+        End If
+
+        ' Display the date in the PDF
+        gfx.DrawString("Date: ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 170, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(displayDate, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(440, 170, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw "MIS TROUBLE REPORT" header
         Dim troubleReportFont As New PdfSharp.Drawing.XFont("Arial", 14, PdfSharp.Drawing.XFontStyle.Bold)
@@ -357,20 +365,43 @@ Public Class Form1
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX, troubleBoxY, troubleBoxWidth, troubleBoxHeight)
         gfx.DrawString("TROUBLE", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleBoxY + 10, troubleBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
-        ' Draw the trouble description
+        ' Draw the trouble description with text wrapping
         Dim troubleDescriptionY As Double = troubleBoxY + 30
-        gfx.DrawString(description, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, troubleBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        Dim maxWidth As Double = troubleBoxWidth - 20
+        Dim lineHeight As Double = font.GetHeight()
+
+        Dim words As String() = description.Split(" "c)
+        Dim line As String = ""
+        Dim spaceWidth As Double = gfx.MeasureString(" ", font).Width
+
+        For Each word As String In words
+            Dim testLine As String = If(line = "", word, line & " " & word)
+            Dim testWidth As Double = gfx.MeasureString(testLine, font).Width
+
+            If testWidth < maxWidth Then
+                line = testLine
+            Else
+                gfx.DrawString(line, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, maxWidth, lineHeight), PdfSharp.Drawing.XStringFormats.TopLeft)
+                troubleDescriptionY += lineHeight
+                line = word
+            End If
+        Next
+
+        ' Draw the last line
+        If line <> "" Then
+            gfx.DrawString(line, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, maxWidth, lineHeight), PdfSharp.Drawing.XStringFormats.TopLeft)
+        End If
 
         ' Draw the underline for the description
         Dim underlineHeight As Double = 0 ' Adjust the height of the underline as needed
-        Dim underlineY As Double = troubleDescriptionY + font.GetHeight() - underlineHeight
+        Dim underlineY As Double = troubleDescriptionY + lineHeight - underlineHeight
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, underlineY, troubleBoxWidth - 20, underlineHeight)
 
         ' Draw the additional lines
-        Dim additionalLineY1 As Double = underlineY + underlineHeight + 25 ' Adjust the spacing between lines as needed
+        Dim additionalLineY1 As Double = underlineY + underlineHeight + 20 ' Adjust the spacing between lines as needed
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, additionalLineY1, troubleBoxWidth - 20, underlineHeight)
 
-        Dim additionalLineY2 As Double = additionalLineY1 + underlineHeight + 25 ' Adjust the spacing between lines as needed
+        Dim additionalLineY2 As Double = additionalLineY1 + underlineHeight + 20 ' Adjust the spacing between lines as needed
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, additionalLineY2, troubleBoxWidth - 20, underlineHeight)
 
         ' Draw action box
@@ -388,26 +419,34 @@ Public Class Form1
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
         actionDescriptionY += font.GetHeight()
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        actionDescriptionY += font.GetHeight()
+        gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        actionDescriptionY += font.GetHeight()
+        gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        actionDescriptionY += font.GetHeight()
+        gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw reported by section
         gfx.DrawString("Reported by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Time:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(210, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("______", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(240, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Performed by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(280, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(355, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("__________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        Dim reportDateTime As DateTime
+        Dim displayTime As String = If(DateTime.TryParse(reportDate, reportDateTime), reportDateTime.ToString("hh:mm tt"), "Error: Invalid date format")
+        gfx.DrawString("Time:________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(180, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(displayTime, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(210, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Performed by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(265, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(340, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
         gfx.DrawString("Received by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 355, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("__________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 355, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
         gfx.DrawString("Approved by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 375, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 375, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Accepted by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(280, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("____________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(350, 355, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("__________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 375, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Accepted by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(265, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("___________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(335, 355, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw performed by section
-        gfx.DrawString("Time Started:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(450, 330, 50, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("______", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(520, 330, 150, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Time Completed:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(430, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("______", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(520, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time Started:________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(430, 330, 50, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(displayTime, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(505, 330, 150, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time Completed:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(410, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(500, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw the big box
         Dim bigBoxX As Double = 20
