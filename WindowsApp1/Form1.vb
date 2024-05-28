@@ -323,32 +323,37 @@ Public Class Form1
         Dim font As New PdfSharp.Drawing.XFont("Arial", 12)
 
         ' Draw header
-        Dim headerFont As New PdfSharp.Drawing.XFont("Arial", 16, PdfSharp.Drawing.XFontStyle.Bold)
-        gfx.DrawString("MAYER STEEL PIPE CORPORATION", headerFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 20, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
+        Dim italicFont As New PdfSharp.Drawing.XFont("Calibri", 10, PdfSharp.Drawing.XFontStyle.Italic)
+        gfx.DrawString("F͟o͟r͟m͟ ͟R͟e͟f͟.͟Q͟F͟/͟M͟I͟S͟-͟0͟0͟1͟", italicFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(360, 20, 200, 0), PdfSharp.Drawing.XStringFormats.TopRight)
+        gfx.DrawString("R̲e̲v̲.̲ ̲1̲;̲ ̲A̲p̲r̲i̲l̲'̲1̲8̲", italicFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(350, 30, 200, 0), PdfSharp.Drawing.XStringFormats.TopRight)
+
+
+        Dim headerFont As New PdfSharp.Drawing.XFont("Arial", 22, PdfSharp.Drawing.XFontStyle.Bold)
+        gfx.DrawString("MAYER STEEL PIPE CORPORATION", headerFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 60, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
 
         ' Draw MIS Department header
-        Dim misHeaderFont As New PdfSharp.Drawing.XFont("Arial", 14, PdfSharp.Drawing.XFontStyle.Bold)
-        gfx.DrawString("MIS Department", misHeaderFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 50, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
+        Dim misHeaderFont As New PdfSharp.Drawing.XFont("Arial", 12, PdfSharp.Drawing.XFontStyle.Bold)
+        gfx.DrawString("MIS Department", misHeaderFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 85, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
 
         ' Draw ticket number and date
-        gfx.DrawString("No:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 70, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString(ticketNumber, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(430, 70, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Date:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 90, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString(reportDate, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(440, 90, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("No: ͟ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 100, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(ticketNumber, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(430, 100, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Date: ͟ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 170, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(reportDate, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(440, 170, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw "MIS TROUBLE REPORT" header
         Dim troubleReportFont As New PdfSharp.Drawing.XFont("Arial", 14, PdfSharp.Drawing.XFontStyle.Bold)
-        gfx.DrawString("MIS TROUBLE REPORT", troubleReportFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 110, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
+        gfx.DrawString("MIS TROUBLE REPORT", troubleReportFont, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(0, 130, page.Width.Point, 0), PdfSharp.Drawing.XStringFormats.TopCenter)
 
         ' Draw department/section
-        gfx.DrawString("Department/Section:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 140, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString(departmentSection, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(180, 140, 300, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Department/Section: ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 170, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString(departmentSection, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(180, 170, 300, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw trouble box
         Dim troubleBoxX As Double = 40
-        Dim troubleBoxY As Double = 160
+        Dim troubleBoxY As Double = 190
         Dim troubleBoxWidth As Double = page.Width.Point * 0.4
-        Dim troubleBoxHeight As Double = 100
+        Dim troubleBoxHeight As Double = 135
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX, troubleBoxY, troubleBoxWidth, troubleBoxHeight)
         gfx.DrawString("TROUBLE", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleBoxY + 10, troubleBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
@@ -372,7 +377,7 @@ Public Class Form1
         Dim actionBoxX As Double = page.Width.Point * 0.5
         Dim actionBoxY As Double = troubleBoxY
         Dim actionBoxWidth As Double = page.Width.Point * 0.4
-        Dim actionBoxHeight As Double = 100
+        Dim actionBoxHeight As Double = 135
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, actionBoxX, actionBoxY, actionBoxWidth, actionBoxHeight)
         gfx.DrawString("ACTION", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionBoxY + 10, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
@@ -385,28 +390,30 @@ Public Class Form1
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw reported by section
-        gfx.DrawString("Reported by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 280, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("____________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(130, 280, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Time:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 280, 50, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(450, 280, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Reported by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(210, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(240, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Performed by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(280, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(355, 330, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Received by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 355, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Approved by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 375, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(110, 375, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Accepted by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(280, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("____________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(350, 355, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw performed by section
-        gfx.DrawString("Performed by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 300, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("____________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(130, 300, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Time Started:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 300, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(510, 300, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-
-        ' Draw accepted by section
-        gfx.DrawString("Accepted by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 320, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("____________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(130, 320, 200, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("Time Completed:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(400, 320, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        gfx.DrawString("________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(510, 320, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time Started:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(450, 330, 50, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(520, 330, 150, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("Time Completed:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(430, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        gfx.DrawString("______", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(520, 355, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw the big box
-        Dim bigBoxX As Double = 50
-        Dim bigBoxY As Double = 90
+        Dim bigBoxX As Double = 20
+        Dim bigBoxY As Double = 160
         Dim bigBoxWidth As Double = page.Width.Point * 0.9
-        Dim bigBoxHeight As Double = 310
+        Dim bigBoxHeight As Double = 260
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, bigBoxX, bigBoxY, bigBoxWidth, bigBoxHeight)
 
         ' Save the PDF document
@@ -417,8 +424,6 @@ Public Class Form1
         ' Open the PDF file with the default viewer
         Process.Start(pdfFilePath)
     End Sub
-
-
 
 
 #End Region
