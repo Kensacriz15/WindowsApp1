@@ -3,6 +3,7 @@ Imports System.Text
 Imports PdfSharp.Pdf
 Imports PdfSharp.Drawing
 Imports System.Diagnostics
+Imports System.Text.RegularExpressions
 
 
 'use 192.168.1.15 default saving
@@ -12,6 +13,10 @@ Public Class Form1
         ComboBox1.SelectedIndex = 0
         ComboBox2.SelectedIndex = 0
         Timer1.Start()
+        txtIPAddress.Text = My.Settings.IPAddress
+        Dim defaultFilePath As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS")
+        TextBox5.Text = defaultFilePath
+
     End Sub
     Private Sub TabPage1_Click(sender As Object, e As EventArgs)
 
@@ -26,6 +31,7 @@ Public Class Form1
     End Sub
 
     Private Sub Button3_Click_1(sender As Object, e As EventArgs) Handles Button3.Click
+        'Settings Button
         TabControl1.SelectedIndex = 1
     End Sub
 
@@ -482,7 +488,44 @@ Public Class Form1
 
 
 
+
 #End Region
 
+#Region "Tab 3 Code"
 
+    Private Sub txtIPAddress_TextChanged(sender As Object, e As EventArgs) Handles txtIPAddress.TextChanged
+
+    End Sub
+
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+        ' Validate the IP address format if needed
+        If ValidateIPAddress(txtIPAddress.Text) Then
+            ' Save the IP address to the settings
+            My.Settings.IPAddress = txtIPAddress.Text
+            My.Settings.Save()
+            MessageBox.Show("Settings saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        Else
+            MessageBox.Show("Invalid IP Address format.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+    End Sub
+
+    Private Function ValidateIPAddress(ip As String) As Boolean
+        ' Add your IP address validation logic here if necessary
+        ' This is a simple placeholder validation
+        Dim ipPattern As String = "^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+        Return Regex.IsMatch(ip, ipPattern)
+    End Function
+
+    Private Sub TextBox5_TextChanged(sender As Object, e As EventArgs) Handles TextBox5.TextChanged
+        ' Set the default file path to the public documents folder
+        Dim defaultFilePath As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS")
+
+        ' Append the entered file name to the default file path
+        Dim filePath As String = Path.Combine(defaultFilePath, TextBox5.Text)
+
+        ' Update the TextBox5 text with the updated file path
+        TextBox5.Text = filePath
+    End Sub
+
+#End Region
 End Class

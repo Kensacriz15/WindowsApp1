@@ -42,11 +42,15 @@ Partial Class Form1
         Me.TextBox4 = New System.Windows.Forms.TextBox()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.txtIPAddress = New System.Windows.Forms.TextBox()
         Me.Button6 = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.TextBox5 = New System.Windows.Forms.TextBox()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.Panel1.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.Home.SuspendLayout()
@@ -96,7 +100,7 @@ Partial Class Form1
         Me.Button7.Name = "Button7"
         Me.Button7.Size = New System.Drawing.Size(128, 40)
         Me.Button7.TabIndex = 3
-        Me.Button7.Text = "Ticket"
+        Me.Button7.Text = "Settings"
         Me.Button7.UseVisualStyleBackColor = False
         '
         'TabControl1
@@ -154,10 +158,10 @@ Partial Class Form1
         Me.ComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ComboBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ComboBox2.FormattingEnabled = True
-        Me.ComboBox2.Items.AddRange(New Object() {"Level", "LOW", "URGENT", "CRITICAL"})
+        Me.ComboBox2.Items.AddRange(New Object() {"Risk", "LOW IMPACT-30mins", "NEGLIGIBLE-2hrs", "MODERATE-3hrs", "CRITICAL-4hrs-Up"})
         Me.ComboBox2.Location = New System.Drawing.Point(286, 233)
         Me.ComboBox2.Name = "ComboBox2"
-        Me.ComboBox2.Size = New System.Drawing.Size(121, 26)
+        Me.ComboBox2.Size = New System.Drawing.Size(136, 26)
         Me.ComboBox2.TabIndex = 6
         '
         'RichTextBox1
@@ -241,6 +245,10 @@ Partial Class Form1
         '
         'TabPage1
         '
+        Me.TabPage1.Controls.Add(Me.Label3)
+        Me.TabPage1.Controls.Add(Me.Label2)
+        Me.TabPage1.Controls.Add(Me.TextBox5)
+        Me.TabPage1.Controls.Add(Me.txtIPAddress)
         Me.TabPage1.Controls.Add(Me.Button6)
         Me.TabPage1.Location = New System.Drawing.Point(4, 22)
         Me.TabPage1.Name = "TabPage1"
@@ -249,22 +257,31 @@ Partial Class Form1
         Me.TabPage1.TabIndex = 2
         Me.TabPage1.UseVisualStyleBackColor = True
         '
+        'txtIPAddress
+        '
+        Me.txtIPAddress.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtIPAddress.Location = New System.Drawing.Point(88, 32)
+        Me.txtIPAddress.Name = "txtIPAddress"
+        Me.txtIPAddress.Size = New System.Drawing.Size(173, 29)
+        Me.txtIPAddress.TabIndex = 1
+        '
         'Button6
         '
-        Me.Button6.Location = New System.Drawing.Point(279, 52)
+        Me.Button6.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button6.Location = New System.Drawing.Point(324, 275)
         Me.Button6.Name = "Button6"
-        Me.Button6.Size = New System.Drawing.Size(75, 23)
+        Me.Button6.Size = New System.Drawing.Size(88, 35)
         Me.Button6.TabIndex = 0
-        Me.Button6.Text = "Button6"
+        Me.Button6.Text = "Save"
         Me.Button6.UseVisualStyleBackColor = True
         '
         'Panel2
         '
         Me.Panel2.BackColor = System.Drawing.Color.LightBlue
         Me.Panel2.Controls.Add(Me.TextBox3)
-        Me.Panel2.Location = New System.Drawing.Point(2, 1)
+        Me.Panel2.Location = New System.Drawing.Point(4, 1)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(797, 94)
+        Me.Panel2.Size = New System.Drawing.Size(795, 94)
         Me.Panel2.TabIndex = 2
         '
         'TextBox3
@@ -286,6 +303,33 @@ Partial Class Form1
         'Timer1
         '
         '
+        'TextBox5
+        '
+        Me.TextBox5.Enabled = False
+        Me.TextBox5.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.TextBox5.Location = New System.Drawing.Point(88, 88)
+        Me.TextBox5.Name = "TextBox5"
+        Me.TextBox5.Size = New System.Drawing.Size(290, 29)
+        Me.TextBox5.TabIndex = 2
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(24, 43)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(58, 13)
+        Me.Label2.TabIndex = 3
+        Me.Label2.Text = "IP Address"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(24, 99)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(61, 13)
+        Me.Label3.TabIndex = 4
+        Me.Label3.Text = "Folder Path"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -304,6 +348,7 @@ Partial Class Form1
         Me.TabPage2.ResumeLayout(False)
         Me.TabPage2.PerformLayout()
         Me.TabPage1.ResumeLayout(False)
+        Me.TabPage1.PerformLayout()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
         Me.ResumeLayout(False)
@@ -327,9 +372,13 @@ Partial Class Form1
     Friend WithEvents Timer1 As Timer
     Friend WithEvents Button3 As Button
     Friend WithEvents TabPage1 As TabPage
-    Friend WithEvents Button6 As Button
     Friend WithEvents Button7 As Button
     Friend WithEvents Button2 As Button
     Friend WithEvents TextBox4 As TextBox
     Friend WithEvents Label1 As Label
+    Friend WithEvents Button6 As Button
+    Friend WithEvents txtIPAddress As TextBox
+    Friend WithEvents TextBox5 As TextBox
+    Friend WithEvents Label3 As Label
+    Friend WithEvents Label2 As Label
 End Class
