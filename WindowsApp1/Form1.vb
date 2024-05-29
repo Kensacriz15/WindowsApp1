@@ -47,6 +47,7 @@ Public Class Form1
         TextBox3.Enabled = False
     End Sub
 
+
 #Region "Tab 1 Code"
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
         ' Select Department CSMC, MKK, SPIRAL, MARKETING, LOGISTIC
@@ -64,8 +65,14 @@ Public Class Form1
         TextBox1.Text = ticketNumber
     End Sub
 
-    Private Sub RichTextBox1_TextChanged(sender As Object, e As EventArgs)
-        ' Description Problem
+    Private Sub RichTextBox1_KeyPress(sender As Object, e As KeyPressEventArgs) Handles RichTextBox1.KeyPress
+        Dim words As String() = RichTextBox1.Text.Split(" "c)
+
+        ' Check if the number of words exceeds 5
+        If words.Length >= 5 AndAlso e.KeyChar <> ControlChars.Back AndAlso Not Char.IsControl(e.KeyChar) AndAlso Char.IsWhiteSpace(e.KeyChar) Then
+            e.Handled = True ' Prevent the additional word from being entered
+            MessageBox.Show("Word limit exceeded. Please limit your input to 5 words.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        End If
     End Sub
 
     Private Sub ComboBox2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox2.SelectedIndexChanged
@@ -366,30 +373,32 @@ Public Class Form1
         gfx.DrawString("TROUBLE", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleBoxY + 10, troubleBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
 
         ' Draw the trouble description with text wrapping
-        Dim troubleDescriptionY As Double = troubleBoxY + 30
+        Dim italicFont1 As New PdfSharp.Drawing.XFont("Arial", 12, PdfSharp.Drawing.XFontStyle.Italic)
+        Dim troubleDescriptionY As Double = troubleBoxY + 15
         Dim maxWidth As Double = troubleBoxWidth - 20
-        Dim lineHeight As Double = font.GetHeight()
+        Dim lineHeight As Double = italicFont1.GetHeight()
 
         Dim words As String() = description.Split(" "c)
         Dim line As String = ""
-        Dim spaceWidth As Double = gfx.MeasureString(" ", font).Width
+        Dim spaceWidth As Double = gfx.MeasureString(" ", font).Width ' Use italic font for measuring space width
 
         For Each word As String In words
             Dim testLine As String = If(line = "", word, line & " " & word)
-            Dim testWidth As Double = gfx.MeasureString(testLine, font).Width
+            Dim testWidth As Double = gfx.MeasureString(testLine, italicFont1).Width ' Use italic font for measuring width
 
             If testWidth < maxWidth Then
                 line = testLine
             Else
-                gfx.DrawString(line, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, maxWidth, lineHeight), PdfSharp.Drawing.XStringFormats.TopLeft)
                 troubleDescriptionY += lineHeight
+                gfx.DrawString(line, italicFont1, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, maxWidth, lineHeight), PdfSharp.Drawing.XStringFormats.TopLeft)
                 line = word
             End If
         Next
 
-        ' Draw the last line
+        ' Draw the remaining text after the loop completes
         If line <> "" Then
-            gfx.DrawString(line, font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, maxWidth, lineHeight), PdfSharp.Drawing.XStringFormats.TopLeft)
+            troubleDescriptionY += lineHeight
+            gfx.DrawString(line, italicFont1, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(troubleBoxX + 10, troubleDescriptionY, maxWidth, lineHeight), PdfSharp.Drawing.XStringFormats.TopLeft)
         End If
 
         ' Draw the underline for the description
@@ -404,6 +413,13 @@ Public Class Form1
         Dim additionalLineY2 As Double = additionalLineY1 + underlineHeight + 20 ' Adjust the spacing between lines as needed
         gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, additionalLineY2, troubleBoxWidth - 20, underlineHeight)
 
+        Dim additionalLineY3 As Double = additionalLineY2 + underlineHeight + 20 ' Adjust the spacing between lines as needed
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, additionalLineY3, troubleBoxWidth - 20, underlineHeight)
+
+        Dim additionalLineY4 As Double = additionalLineY3 + underlineHeight + 20 ' Adjust the spacing between lines as needed
+        gfx.DrawRectangle(PdfSharp.Drawing.XPens.Black, troubleBoxX + 10, additionalLineY4, troubleBoxWidth - 20, underlineHeight)
+
+
         ' Draw action box
         Dim actionBoxX As Double = page.Width.Point * 0.5
         Dim actionBoxY As Double = troubleBoxY
@@ -415,16 +431,15 @@ Public Class Form1
         ' Draw action description
         Dim actionDescriptionY As Double = actionBoxY + 30
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        actionDescriptionY += font.GetHeight()
+        actionDescriptionY += font.GetHeight() + 6
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        actionDescriptionY += font.GetHeight()
+        actionDescriptionY += font.GetHeight() + 6
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        actionDescriptionY += font.GetHeight()
+        actionDescriptionY += font.GetHeight() + 6
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        actionDescriptionY += font.GetHeight()
+        actionDescriptionY += font.GetHeight() + 6
         gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
-        actionDescriptionY += font.GetHeight()
-        gfx.DrawString("______________________________", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(actionBoxX + 10, actionDescriptionY, actionBoxWidth - 20, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
+        actionDescriptionY += font.GetHeight() + 6
 
         ' Draw reported by section
         gfx.DrawString("Reported by:", font, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XRect(40, 330, 100, 0), PdfSharp.Drawing.XStringFormats.TopLeft)
@@ -465,5 +480,9 @@ Public Class Form1
     End Sub
 
 
+
+
 #End Region
+
+
 End Class

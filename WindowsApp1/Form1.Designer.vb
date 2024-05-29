@@ -30,6 +30,7 @@ Partial Class Form1
         Me.Button7 = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.Home = New System.Windows.Forms.TabPage()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.Button5 = New System.Windows.Forms.Button()
         Me.ComboBox2 = New System.Windows.Forms.ComboBox()
         Me.RichTextBox1 = New System.Windows.Forms.RichTextBox()
@@ -114,6 +115,7 @@ Partial Class Form1
         '
         'Home
         '
+        Me.Home.Controls.Add(Me.Label1)
         Me.Home.Controls.Add(Me.Button5)
         Me.Home.Controls.Add(Me.ComboBox2)
         Me.Home.Controls.Add(Me.RichTextBox1)
@@ -127,6 +129,15 @@ Partial Class Form1
         Me.Home.Size = New System.Drawing.Size(660, 356)
         Me.Home.TabIndex = 0
         Me.Home.UseVisualStyleBackColor = True
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(283, 153)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(115, 13)
+        Me.Label1.TabIndex = 8
+        Me.Label1.Text = "Initial Problem 5 Words"
         '
         'Button5
         '
@@ -152,7 +163,7 @@ Partial Class Form1
         'RichTextBox1
         '
         Me.RichTextBox1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RichTextBox1.Location = New System.Drawing.Point(202, 146)
+        Me.RichTextBox1.Location = New System.Drawing.Point(203, 169)
         Me.RichTextBox1.Name = "RichTextBox1"
         Me.RichTextBox1.Size = New System.Drawing.Size(272, 58)
         Me.RichTextBox1.TabIndex = 5
@@ -320,4 +331,5 @@ Partial Class Form1
     Friend WithEvents Button7 As Button
     Friend WithEvents Button2 As Button
     Friend WithEvents TextBox4 As TextBox
+    Friend WithEvents Label1 As Label
 End Class
