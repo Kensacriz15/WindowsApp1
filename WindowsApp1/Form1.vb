@@ -5,9 +5,47 @@ Imports PdfSharp.Drawing
 Imports System.Diagnostics
 Imports System.Text.RegularExpressions
 Imports System.Net
+Imports System.Runtime.InteropServices
+Imports System.Security.Principal
 
 'use 192.168.1.15 default saving
 Public Class Form1
+
+    Public Class Impersonation
+        <DllImport("advapi32.dll", SetLastError:=True, CharSet:=CharSet.Auto)>
+        Private Shared Function LogonUser(lpszUsername As String, lpszDomain As String, lpszPassword As String, dwLogonType As Integer, dwLogonProvider As Integer, ByRef phToken As IntPtr) As Boolean
+        End Function
+
+        <DllImport("kernel32.dll", CharSet:=CharSet.Auto)>
+        Private Shared Function CloseHandle(handle As IntPtr) As Boolean
+        End Function
+
+        Private Const LOGON32_LOGON_INTERACTIVE As Integer = 2
+        Private Const LOGON32_PROVIDER_DEFAULT As Integer = 0
+        Private impersonationContext As WindowsImpersonationContext
+
+        Public Function ImpersonateValidUser(userName As String, domain As String, password As String) As Boolean
+            Dim tokenHandle As New IntPtr(0)
+
+            If LogonUser(userName, domain, password, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, tokenHandle) <> 0 Then
+                Dim newId As New WindowsIdentity(tokenHandle)
+                impersonationContext = newId.Impersonate()
+
+                If impersonationContext IsNot Nothing Then
+                    CloseHandle(tokenHandle)
+                    Return True
+                End If
+            End If
+
+            Return False
+        End Function
+
+        Public Sub UndoImpersonation()
+            If impersonationContext IsNot Nothing Then
+                impersonationContext.Undo()
+            End If
+        End Sub
+    End Class
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ComboBox1.SelectedIndex = 0
@@ -99,26 +137,27 @@ Public Class Form1
         Dim txtFileName As String = $"{month}{year}REPORT.txt"
         Dim txtFilePath As String = Path.Combine(networkPath, txtFileName)
 
-        ' Set up the credentials
-        Dim credentials As New NetworkCredential(My.Settings.Username, My.Settings.Password)
-
-        ' Save report data to the TXT file
-        Dim reportData As String = $"Date: {DateTime.Now:yyyy-MM-dd HH:mm tt}" & Environment.NewLine &
-                               $"Ticket Number: {TextBox1.Text}" & Environment.NewLine &
-                               $"Name: {TextBox2.Text}" & Environment.NewLine &
-                               $"Department: {ComboBox1.Text}" & Environment.NewLine &
-                               $"Description: {RichTextBox1.Text}" & Environment.NewLine &
-                               $"Level: {ComboBox2.Text}" & Environment.NewLine &
-                               "-----------------------------------------" & Environment.NewLine
+        Dim impersonator As New Impersonation()
+        Dim isImpersonated As Boolean = False
 
         Try
+            If Not String.IsNullOrEmpty(My.Settings.Username) AndAlso Not String.IsNullOrEmpty(My.Settings.Password) Then
+                isImpersonated = impersonator.ImpersonateValidUser(My.Settings.Username, "", My.Settings.Password)
+            End If
+
             If Not Directory.Exists(networkPath) Then
                 Directory.CreateDirectory(networkPath)
             End If
 
-            ' Check if the file already exists
+            Dim reportData As String = $"Date: {DateTime.Now:yyyy-MM-dd HH:mm tt}" & Environment.NewLine &
+                                   $"Ticket Number: {TextBox1.Text}" & Environment.NewLine &
+                                   $"Name: {TextBox2.Text}" & Environment.NewLine &
+                                   $"Department: {ComboBox1.Text}" & Environment.NewLine &
+                                   $"Description: {RichTextBox1.Text}" & Environment.NewLine &
+                                   $"Level: {ComboBox2.Text}" & Environment.NewLine &
+                                   "-----------------------------------------" & Environment.NewLine
+
             If File.Exists(txtFilePath) Then
-                ' Append the new report data to the existing file
                 Dim fileContent As String = File.ReadAllText(txtFilePath)
                 If Not fileContent.Contains($"Ticket Number: {TextBox1.Text}") Then
                     Using writer As New StreamWriter(txtFilePath, True, Encoding.UTF8)
@@ -135,27 +174,36 @@ Public Class Form1
             MessageBox.Show("Report data saved to TXT file.")
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Error Saving TXT File", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If isImpersonated Then
+                impersonator.UndoImpersonation()
+            End If
         End Try
     End Sub
 
     Private Sub SaveReportToCSV()
-        Dim commonDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS/TICKETS")
+        Dim networkPath As String = $"\\{My.Settings.IPAddress}\{My.Settings.FilePath}"
         Dim year As String = Date.Now.Year.ToString()
         Dim csvFileName As String = $"{year}REPORT.csv"
-        Dim csvFilePath As String = Path.Combine(commonDirectory, csvFileName)
+        Dim csvFilePath As String = Path.Combine(networkPath, csvFileName)
 
-        ' Save report data to the CSV file
-        Dim reportData As String = $"{DateTime.Now:yyyy-MM-dd hh:mm tt},{TextBox1.Text},{TextBox2.Text},{ComboBox1.Text},{RichTextBox1.Text},{ComboBox2.Text}"
-        Dim newTicketNumber As String = TextBox1.Text
+        Dim impersonator As New Impersonation()
+        Dim isImpersonated As Boolean = False
 
         Try
-            If Not Directory.Exists(commonDirectory) Then
-                Directory.CreateDirectory(commonDirectory)
+            If Not String.IsNullOrEmpty(My.Settings.Username) AndAlso Not String.IsNullOrEmpty(My.Settings.Password) Then
+                isImpersonated = impersonator.ImpersonateValidUser(My.Settings.Username, "", My.Settings.Password)
             End If
+
+            If Not Directory.Exists(networkPath) Then
+                Directory.CreateDirectory(networkPath)
+            End If
+
+            Dim reportData As String = $"{DateTime.Now:yyyy-MM-dd hh:mm tt},{TextBox1.Text},{TextBox2.Text},{ComboBox1.Text},{RichTextBox1.Text},{ComboBox2.Text}"
+            Dim newTicketNumber As String = TextBox1.Text
 
             Dim existingTickets As New List(Of String)
             If File.Exists(csvFilePath) Then
-                ' Read all existing ticket numbers from the CSV file
                 Using reader As New StreamReader(csvFilePath)
                     While Not reader.EndOfStream
                         Dim line As String = reader.ReadLine()
@@ -167,22 +215,23 @@ Public Class Form1
                 End Using
             End If
 
-            ' Check for duplication
             If existingTickets.Contains(newTicketNumber) Then
                 MessageBox.Show("Error: Duplicate ticket number detected. The record was not saved.", "Duplicate Ticket Number", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Else
-                ' Write header if file does not exist
                 If Not File.Exists(csvFilePath) Then
                     Dim header As String = "Date,Ticket Number,Name,Department,Description,Level"
                     File.WriteAllText(csvFilePath, header + Environment.NewLine)
                 End If
 
-                ' Append the new report data
                 File.AppendAllText(csvFilePath, reportData + Environment.NewLine)
                 MessageBox.Show("Report data saved to CSV file.")
             End If
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Error Saving CSV File", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If isImpersonated Then
+                impersonator.UndoImpersonation()
+            End If
         End Try
     End Sub
 
@@ -190,32 +239,49 @@ Public Class Form1
         Dim ticketNumberSuffix As Integer = 1
         Dim ticketNumber As String = currentDate.ToString("ddMMyyyy") & departmentInitial & ticketNumberSuffix
 
-        Dim commonDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS/TICKETS")
+        Dim networkPath As String = $"\\{My.Settings.IPAddress}\{My.Settings.FilePath}"
         Dim year As String = currentDate.Year.ToString()
         Dim csvFileName As String = $"{year}REPORT.csv"
-        Dim csvFilePath As String = Path.Combine(commonDirectory, csvFileName)
+        Dim csvFilePath As String = Path.Combine(networkPath, csvFileName)
 
-        Dim existingTickets As New List(Of String)() ' Declare existingTickets here
+        Dim existingTickets As New List(Of String)()
 
-        If File.Exists(csvFilePath) Then
-            existingTickets = GetExistingTickets(csvFilePath, currentDate, departmentInitial)
+        Try
+            Dim impersonation As New Impersonation()
+            Dim impersonationSuccessful As Boolean = True
 
-            If existingTickets.Count > 0 Then
-                Dim validTicketNumbers = New List(Of Integer)
-                For Each ticket In existingTickets
-                    Dim suffixStr As String = ticket.Substring(8)
-                    Dim suffix As Integer
-                    If Integer.TryParse(suffixStr.Substring(2), suffix) Then
-                        validTicketNumbers.Add(suffix)
-                    End If
-                Next
-
-                If validTicketNumbers.Count > 0 Then
-                    Dim maxSuffix = validTicketNumbers.Max()
-                    ticketNumberSuffix = maxSuffix + 1
-                End If
+            If Not String.IsNullOrEmpty(My.Settings.Username) AndAlso Not String.IsNullOrEmpty(My.Settings.Password) Then
+                impersonationSuccessful = impersonation.ImpersonateValidUser(My.Settings.Username, "", My.Settings.Password)
             End If
-        End If
+
+            If impersonationSuccessful Then
+                If File.Exists(csvFilePath) Then
+                    existingTickets = GetExistingTickets(csvFilePath, currentDate, departmentInitial)
+
+                    If existingTickets.Count > 0 Then
+                        Dim validTicketNumbers = New List(Of Integer)
+                        For Each ticket In existingTickets
+                            Dim suffixStr As String = ticket.Substring(8)
+                            Dim suffix As Integer
+                            If Integer.TryParse(suffixStr.Substring(2), suffix) Then
+                                validTicketNumbers.Add(suffix)
+                            End If
+                        Next
+
+                        If validTicketNumbers.Count > 0 Then
+                            Dim maxSuffix = validTicketNumbers.Max()
+                            ticketNumberSuffix = maxSuffix + 1
+                        End If
+                    End If
+                End If
+            Else
+                MessageBox.Show("Error: Unable to impersonate user.", "Impersonation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+
+            impersonation.UndoImpersonation()
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message, "Error Generating Ticket Number", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
 
         While existingTickets.Contains(currentDate.ToString("ddMMyyyy") & departmentInitial & ticketNumberSuffix.ToString())
             ticketNumberSuffix += 1
@@ -244,7 +310,6 @@ Public Class Form1
         Return existingTickets
     End Function
 
-
 #End Region
 
 #Region "Tab 2 Code"
@@ -256,12 +321,19 @@ Public Class Form1
     Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click
         ' Trigger Find ticket
         Dim ticketNumber As String = TextBox4.Text
-        Dim commonDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS/TICKETS")
+        Dim networkPath As String = $"\\{My.Settings.IPAddress}\{My.Settings.FilePath}"
         Dim year As String = Date.Now.Year.ToString()
         Dim csvFileName As String = $"{year}REPORT.csv"
-        Dim csvFilePath As String = Path.Combine(commonDirectory, csvFileName)
+        Dim csvFilePath As String = Path.Combine(networkPath, csvFileName)
+
+        Dim impersonator As New Impersonation()
+        Dim isImpersonated As Boolean = False
 
         Try
+            If Not String.IsNullOrEmpty(My.Settings.Username) AndAlso Not String.IsNullOrEmpty(My.Settings.Password) Then
+                isImpersonated = impersonator.ImpersonateValidUser(My.Settings.Username, "", My.Settings.Password)
+            End If
+
             If Not File.Exists(csvFilePath) Then
                 MessageBox.Show("CSV file does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Return
@@ -296,7 +368,13 @@ Public Class Form1
                 Dim dialogResult As DialogResult = MessageBox.Show("Do you want to generate a PDF for this ticket?", "Generate PDF", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
                 If dialogResult = DialogResult.Yes Then
-                    GenerateAndSavePDF(commonDirectory, ticketNumber, description, departmentSection, reportDate)
+                    If Not Directory.Exists(networkPath) Then
+                        Directory.CreateDirectory(networkPath)
+                    End If
+
+                    Dim pdfFilePath As String = Path.Combine(networkPath, $"{ticketNumber}.pdf")
+
+                    GenerateAndSavePDF(networkPath, ticketNumber, description, departmentSection, reportDate)
                 End If
             Else
                 MessageBox.Show("Ticket number not found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -304,6 +382,10 @@ Public Class Form1
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            If isImpersonated Then
+                impersonator.UndoImpersonation()
+            End If
         End Try
     End Sub
 
@@ -321,7 +403,8 @@ Public Class Form1
     End Function
 
     Private Sub GenerateAndSavePDF(commonDirectory As String, ticketNumber As String, description As String, departmentSection As String, reportDate As String)
-        Dim pdfFilePath As String = Path.Combine(commonDirectory, $"{ticketNumber}.pdf")
+        Dim networkPath As String = $"\\{My.Settings.IPAddress}\{My.Settings.FilePath}"
+        Dim pdfFilePath As String = Path.Combine(networkPath, $"{ticketNumber}.pdf")
 
         ' Create a new PDF document
         Dim document As New PdfSharp.Pdf.PdfDocument()
@@ -476,7 +559,7 @@ Public Class Form1
         MessageBox.Show("PDF generated and saved successfully.", "PDF Generated", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         ' Open the PDF file with the default viewer
-        Process.Start(pdfFilePath)
+        Process.Start(networkPath)
     End Sub
 
 
@@ -494,7 +577,7 @@ Public Class Form1
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
         ' Validate the IP address format if needed
         If ValidateIPAddress(txtIPAddress.Text) Then
-            ' Save the IP address to the settings
+            ' Save the IP address, file path, username, and password to the settings
             My.Settings.IPAddress = txtIPAddress.Text
             My.Settings.FilePath = TextBox5.Text
             My.Settings.Username = TextBox6.Text
