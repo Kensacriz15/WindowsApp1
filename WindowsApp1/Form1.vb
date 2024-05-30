@@ -4,7 +4,7 @@ Imports PdfSharp.Pdf
 Imports PdfSharp.Drawing
 Imports System.Diagnostics
 Imports System.Text.RegularExpressions
-
+Imports System.Net
 
 'use 192.168.1.15 default saving
 Public Class Form1
@@ -14,9 +14,9 @@ Public Class Form1
         ComboBox2.SelectedIndex = 0
         Timer1.Start()
         txtIPAddress.Text = My.Settings.IPAddress
-        Dim defaultFilePath As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS")
-        TextBox5.Text = defaultFilePath
-
+        TextBox5.Text = My.Settings.FilePath
+        TextBox6.Text = My.Settings.Username
+        TextBox7.Text = My.Settings.Password
     End Sub
     Private Sub TabPage1_Click(sender As Object, e As EventArgs)
 
@@ -52,6 +52,7 @@ Public Class Form1
         TextBox3.ReadOnly = True
         TextBox3.Enabled = False
     End Sub
+
 
 
 #Region "Tab 1 Code"
@@ -92,11 +93,14 @@ Public Class Form1
     End Sub
 
     Private Sub SaveReportToTXT()
-        Dim commonDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS/REPORT")
+        Dim networkPath As String = $"\\{My.Settings.IPAddress}\{My.Settings.FilePath}"
         Dim month As String = Date.Now.ToString("MMMM").ToUpper()
         Dim year As String = Date.Now.Year.ToString()
         Dim txtFileName As String = $"{month}{year}REPORT.txt"
-        Dim txtFilePath As String = Path.Combine(commonDirectory, txtFileName)
+        Dim txtFilePath As String = Path.Combine(networkPath, txtFileName)
+
+        ' Set up the credentials
+        Dim credentials As New NetworkCredential(My.Settings.Username, My.Settings.Password)
 
         ' Save report data to the TXT file
         Dim reportData As String = $"Date: {DateTime.Now:yyyy-MM-dd HH:mm tt}" & Environment.NewLine &
@@ -108,37 +112,27 @@ Public Class Form1
                                "-----------------------------------------" & Environment.NewLine
 
         Try
-            If Not Directory.Exists(commonDirectory) Then
-                Directory.CreateDirectory(commonDirectory)
+            If Not Directory.Exists(networkPath) Then
+                Directory.CreateDirectory(networkPath)
             End If
 
             ' Check if the file already exists
             If File.Exists(txtFilePath) Then
                 ' Append the new report data to the existing file
-            End If
-
-
-            Dim existingTickets As New List(Of String)
-
-            If existingTickets.Contains(TextBox1.Text) Then
-                MessageBox.Show("Error: Duplicate ticket number detected. The record was not saved.", "Duplicate Ticket Number", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Else
-                ' Append the new report data to the existing file or create a new file if it doesn't exist
-                If File.Exists(txtFilePath) Then
-                    ' Check if the ticket number already exists in the file
-                    Dim fileContent As String = File.ReadAllText(txtFilePath)
-                    If Not fileContent.Contains($"Ticket Number: {TextBox1.Text}") Then
-                        File.AppendAllText(txtFilePath, reportData)
-                    Else
-                        MessageBox.Show("Error: Duplicate ticket number detected. The record was not saved.", "Duplicate Ticket Number", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                        Return
-                    End If
+                Dim fileContent As String = File.ReadAllText(txtFilePath)
+                If Not fileContent.Contains($"Ticket Number: {TextBox1.Text}") Then
+                    Using writer As New StreamWriter(txtFilePath, True, Encoding.UTF8)
+                        writer.WriteLine(reportData)
+                    End Using
                 Else
-                    File.WriteAllText(txtFilePath, reportData)
+                    MessageBox.Show("Error: Duplicate ticket number detected. The record was not saved.", "Duplicate Ticket Number", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Return
                 End If
-
-                MessageBox.Show("Report data saved to TXT file.")
+            Else
+                File.WriteAllText(txtFilePath, reportData)
             End If
+
+            MessageBox.Show("Report data saved to TXT file.")
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message, "Error Saving TXT File", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
@@ -502,6 +496,9 @@ Public Class Form1
         If ValidateIPAddress(txtIPAddress.Text) Then
             ' Save the IP address to the settings
             My.Settings.IPAddress = txtIPAddress.Text
+            My.Settings.FilePath = TextBox5.Text
+            My.Settings.Username = TextBox6.Text
+            My.Settings.Password = TextBox7.Text
             My.Settings.Save()
             MessageBox.Show("Settings saved successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
         Else
@@ -510,22 +507,44 @@ Public Class Form1
     End Sub
 
     Private Function ValidateIPAddress(ip As String) As Boolean
-        ' Add your IP address validation logic here if necessary
-        ' This is a simple placeholder validation
+        ' Simple IP address validation
         Dim ipPattern As String = "^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
         Return Regex.IsMatch(ip, ipPattern)
     End Function
 
     Private Sub TextBox5_TextChanged(sender As Object, e As EventArgs) Handles TextBox5.TextChanged
-        ' Set the default file path to the public documents folder
-        Dim defaultFilePath As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MIS")
 
-        ' Append the entered file name to the default file path
-        Dim filePath As String = Path.Combine(defaultFilePath, TextBox5.Text)
+        My.Settings.FilePath = TextBox5.Text
+    End Sub
 
-        ' Update the TextBox5 text with the updated file path
-        TextBox5.Text = filePath
+
+    Private Sub Label3_Click(sender As Object, e As EventArgs) Handles Label3.Click
+
+    End Sub
+
+    Private Sub Label2_Click(sender As Object, e As EventArgs) Handles Label2.Click
+
+    End Sub
+
+    Private Sub Panel2_Paint(sender As Object, e As PaintEventArgs) Handles Panel2.Paint
+
+    End Sub
+
+    Private Sub TextBox6_TextChanged(sender As Object, e As EventArgs) Handles TextBox6.TextChanged
+        My.Settings.Username = TextBox6.Text
+    End Sub
+
+    Private Sub TextBox7_TextChanged(sender As Object, e As EventArgs) Handles TextBox7.TextChanged
+        Dim password As String = TextBox7.Text
+        Dim maskedPassword As String = New String("*"c, password.Length)
+        TextBox7.Text = maskedPassword
+        TextBox7.Select(password.Length, 0)
+    End Sub
+
+    Private Sub TabPage1_Click_1(sender As Object, e As EventArgs) Handles TabPage1.Click
+
     End Sub
 
 #End Region
+
 End Class
