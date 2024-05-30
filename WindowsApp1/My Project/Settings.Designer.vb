@@ -68,7 +68,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("Users\Public\Documents\Test\")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Users\Public\Documents\MIS")>  _
         Public Property FilePath() As String
             Get
                 Return CType(Me("FilePath"),String)

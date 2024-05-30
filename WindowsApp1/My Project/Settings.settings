@@ -6,7 +6,7 @@
       <Value Profile="(Default)">192.168.1.15</Value>
     </Setting>
     <Setting Name="FilePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Users\Public\Documents\Test\</Value>
+      <Value Profile="(Default)">Users\Public\Documents\MIS</Value>
     </Setting>
     <Setting Name="Username" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

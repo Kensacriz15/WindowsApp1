@@ -55,6 +55,9 @@ Public Class Form1
         TextBox5.Text = My.Settings.FilePath
         TextBox6.Text = My.Settings.Username
         TextBox7.Text = My.Settings.Password
+        TabControl1.Location = New Point(139, 71)
+        TabControl1.Anchor = AnchorStyles.Top Or AnchorStyles.Left
+        MaximizeBox = False
     End Sub
     Private Sub TabPage1_Click(sender As Object, e As EventArgs)
 
