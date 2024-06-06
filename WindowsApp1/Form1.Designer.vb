@@ -30,6 +30,7 @@ Partial Class Form1
         Me.Button7 = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.Home = New System.Windows.Forms.TabPage()
+        Me.Label8 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Button5 = New System.Windows.Forms.Button()
         Me.ComboBox2 = New System.Windows.Forms.ComboBox()
@@ -39,6 +40,7 @@ Partial Class Form1
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.Label9 = New System.Windows.Forms.Label()
         Me.TextBox4 = New System.Windows.Forms.TextBox()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
@@ -57,7 +59,6 @@ Partial Class Form1
         Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.Label8 = New System.Windows.Forms.Label()
         Me.Panel1.SuspendLayout()
         Me.TabControl1.SuspendLayout()
         Me.Home.SuspendLayout()
@@ -70,9 +71,9 @@ Partial Class Form1
         '
         Me.Button1.BackColor = System.Drawing.Color.LightSteelBlue
         Me.Button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button1.Location = New System.Drawing.Point(3, 1)
+        Me.Button1.Location = New System.Drawing.Point(0, 1)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(128, 40)
+        Me.Button1.Size = New System.Drawing.Size(140, 40)
         Me.Button1.TabIndex = 3
         Me.Button1.Text = "Home"
         Me.Button1.UseVisualStyleBackColor = False
@@ -92,9 +93,9 @@ Partial Class Form1
         '
         Me.Button3.BackColor = System.Drawing.Color.LightSteelBlue
         Me.Button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button3.Location = New System.Drawing.Point(3, 42)
+        Me.Button3.Location = New System.Drawing.Point(0, 42)
         Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(128, 40)
+        Me.Button3.Size = New System.Drawing.Size(140, 40)
         Me.Button3.TabIndex = 4
         Me.Button3.Text = "Status"
         Me.Button3.UseVisualStyleBackColor = False
@@ -103,9 +104,9 @@ Partial Class Form1
         '
         Me.Button7.BackColor = System.Drawing.Color.LightSteelBlue
         Me.Button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button7.Location = New System.Drawing.Point(3, 84)
+        Me.Button7.Location = New System.Drawing.Point(0, 83)
         Me.Button7.Name = "Button7"
-        Me.Button7.Size = New System.Drawing.Size(128, 40)
+        Me.Button7.Size = New System.Drawing.Size(140, 40)
         Me.Button7.TabIndex = 3
         Me.Button7.Text = "Settings"
         Me.Button7.UseVisualStyleBackColor = False
@@ -141,6 +142,16 @@ Partial Class Form1
         Me.Home.Size = New System.Drawing.Size(660, 356)
         Me.Home.TabIndex = 0
         Me.Home.UseVisualStyleBackColor = True
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label8.Location = New System.Drawing.Point(62, 188)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(135, 16)
+        Me.Label8.TabIndex = 9
+        Me.Label8.Text = "Description(Problem)"
         '
         'Label1
         '
@@ -225,6 +236,7 @@ Partial Class Form1
         '
         'TabPage2
         '
+        Me.TabPage2.Controls.Add(Me.Label9)
         Me.TabPage2.Controls.Add(Me.TextBox4)
         Me.TabPage2.Controls.Add(Me.Button2)
         Me.TabPage2.Location = New System.Drawing.Point(4, 22)
@@ -233,6 +245,16 @@ Partial Class Form1
         Me.TabPage2.Size = New System.Drawing.Size(660, 356)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.UseVisualStyleBackColor = True
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label9.Location = New System.Drawing.Point(322, 173)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(105, 18)
+        Me.Label9.TabIndex = 2
+        Me.Label9.Text = "Ticket Number"
         '
         'TextBox4
         '
@@ -396,16 +418,6 @@ Partial Class Form1
         'Timer1
         '
         '
-        'Label8
-        '
-        Me.Label8.AutoSize = True
-        Me.Label8.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label8.Location = New System.Drawing.Point(62, 188)
-        Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(135, 16)
-        Me.Label8.TabIndex = 9
-        Me.Label8.Text = "Description(Problem)"
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -416,7 +428,7 @@ Partial Class Form1
         Me.Controls.Add(Me.TabControl1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form1"
-        Me.Text = "MIS MAINTENANCE"
+        Me.Text = "MIS TROUBLE REPORT"
         Me.Panel1.ResumeLayout(False)
         Me.TabControl1.ResumeLayout(False)
         Me.Home.ResumeLayout(False)
@@ -464,4 +476,5 @@ Partial Class Form1
     Friend WithEvents Label6 As Label
     Friend WithEvents Label7 As Label
     Friend WithEvents Label8 As Label
+    Friend WithEvents Label9 As Label
 End Class
